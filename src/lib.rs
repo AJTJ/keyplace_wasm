@@ -1,8 +1,12 @@
 mod utils;
+use std::future::Future;
+
+use js_sys::Promise;
 use keyplace::{AgentKey, CustodialAgentKey, PassKey};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen_futures::future_to_promise;
 
 #[derive(Serialize, Deserialize)]
 struct NewKey {
@@ -22,7 +26,7 @@ struct CustodialKeyStruct {
 
 // for creating a new agentkey with its custodial key
 #[wasm_bindgen]
-pub fn get_custodial_key(email: &str, pw: &str) -> Result<String, JsValue> {
+pub fn get_all_keys(email: &str, pw: &str) -> Promise {
     utils::set_panic_hook();
     let agentkey = AgentKey::create(Some(email.to_string()));
     let passkey = PassKey::new(pw);
@@ -30,14 +34,12 @@ pub fn get_custodial_key(email: &str, pw: &str) -> Result<String, JsValue> {
         custodial_key: agentkey.custodial_key(passkey),
         agent_key: agentkey,
     };
-
-    Ok(json!(custkey).to_string())
-    // Ok(json!("Response HERe".to_string()).to_string())
+    future_to_promise(async move { Ok(JsValue::from(json!(custkey).to_string())) })
 }
 
 // for deriving agent key from the custodial key sent from the server
 #[wasm_bindgen]
-pub fn get_agent_key(custkey_input: &str, pw: &str) -> Result<String, JsValue> {
+pub fn get_agent_key(custkey_input: &str, pw: &str) -> Promise {
     utils::set_panic_hook();
     let custkey: CustodialKeyStruct =
         serde_json::from_str(custkey_input).expect_throw("incorrect custodial key input");
@@ -46,5 +48,5 @@ pub fn get_agent_key(custkey_input: &str, pw: &str) -> Result<String, JsValue> {
         agent_key: AgentKey::from_custodial_key(custkey.custodial_key, passkey).unwrap(),
     };
 
-    Ok(json!(agentkey).to_string())
+    future_to_promise(async move { Ok(JsValue::from(json!(agentkey).to_string())) })
 }
