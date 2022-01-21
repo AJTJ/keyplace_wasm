@@ -19,10 +19,10 @@ struct AgentKeyStruct {
     agent_key: AgentKey,
 }
 
-#[derive(Serialize, Deserialize)]
-struct CustodialKeyStruct {
-    custodial_key: CustodialAgentKey,
-}
+// #[derive(Serialize, Deserialize)]
+// struct CustodialKeyStruct {
+//     custodial_key: CustodialAgentKey,
+// }
 
 // for creating a new agentkey with its custodial key
 #[wasm_bindgen]
@@ -41,11 +41,14 @@ pub fn get_all_keys(email: &str, pw: &str) -> Promise {
 #[wasm_bindgen]
 pub fn get_agent_key(custkey_input: &str, pw: &str) -> Promise {
     utils::set_panic_hook();
-    let custkey: CustodialKeyStruct =
+    // let custkey: CustodialKeyStruct =
+    //     serde_json::from_str(custkey_input).expect_throw("incorrect custodial key input");
+
+    let custkey: CustodialAgentKey =
         serde_json::from_str(custkey_input).expect_throw("incorrect custodial key input");
     let passkey = PassKey::new(pw);
     let agentkey = AgentKeyStruct {
-        agent_key: AgentKey::from_custodial_key(custkey.custodial_key, passkey).unwrap(),
+        agent_key: AgentKey::from_custodial_key(custkey, passkey).unwrap(),
     };
 
     future_to_promise(async move { Ok(JsValue::from(json!(agentkey).to_string())) })

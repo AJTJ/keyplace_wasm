@@ -4,23 +4,22 @@ const runWasm = async () => {
   const pw = "dank memes";
   const email = "yes@yes.com";
 
-  await init("./pkg/keyplace_wasm_bg.wasm");
+  await init();
   const allKeysResult = await get_all_keys(email, pw);
   const allKeysJson = JSON.parse(allKeysResult);
 
   console.log("WEB - get_all_keys result", allKeysJson.agent_key.keypair);
 
-  let cust_key = {
-    custodial_key: allKeysJson.custodial_key,
-  };
+  const custKey = allKeysJson.custodial_key;
 
-  const agentKeyResult = await get_agent_key(JSON.stringify(cust_key), pw);
+  const agentKeyResult = await get_agent_key(JSON.stringify(custKey), pw);
   const agentKeyJson = JSON.parse(agentKeyResult);
 
   console.log("WEB - get_agent_key result", agentKeyJson.agent_key.keypair);
 };
 runWasm();
 
+// OUTDATED
 // FOR TARGET NODE
 // const { get_custodial_key, get_agent_key } = require("./pkg/keyplace_wasm");
 // const pw = "dank memes";
@@ -30,11 +29,11 @@ runWasm();
 // console.log("Node - custodial key and agent key", result_json);
 
 // // need to await matchResult somehow
-// let cust_key = {
+// let custKey = {
 //   custodial_key: matchResult.custodial_key,
 // };
 
-// const agentKey = get_agent_key(JSON.stringify(cust_key), pw);
+// const agentKey = get_agent_key(JSON.stringify(custKey), pw);
 // console.log("NODE - agent key", JSON.parse(agentKey));
 
 // const loadResultPromise = () => {
@@ -48,10 +47,10 @@ runWasm();
 // loadResultPromise().then((matchResult) => {
 //   console.log("WEB - match result", { matchResult });
 //   document.body.textContent = `matchResult: ${matchResult}`;
-//   let cust_key = {
+//   let custKey = {
 //     custodial_key: matchResult.custodial_key,
 //   };
 
-//   const agentKey = get_agent_key(JSON.stringify(cust_key), pw);
+//   const agentKey = get_agent_key(JSON.stringify(custKey), pw);
 //   console.log("WEB - agent key", JSON.parse(agentKey));
 // });
