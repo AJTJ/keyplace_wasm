@@ -5,7 +5,7 @@ const runWasm = async () => {
   const email = "yes@yes.com";
 
   await init();
-  const allKeysResult = await get_all_keys(email, pw);
+  const allKeysResult = get_all_keys(email, pw);
   const allKeysJson = JSON.parse(allKeysResult);
 
   console.log("WEB - get_all_keys result", allKeysJson.agent_key.keypair);
@@ -28,7 +28,7 @@ const runWasm = async () => {
   let getKeyJson = await getKeyResponse.json();
   let custKey = getKeyJson.custodial_key;
 
-  const agentKeyResult = await get_agent_key(JSON.stringify(custKey), pw);
+  const agentKeyResult = get_agent_key(JSON.stringify(custKey), pw);
   const agentKeyJson = JSON.parse(agentKeyResult);
 
   console.log("WEB - get_agent_key result", agentKeyJson.agent_key.keypair);
@@ -43,14 +43,14 @@ runWasm();
 //   const email = "yes@yes.com";
 
 //   await init();
-//   const allKeysResult = await get_all_keys(email, pw);
+//   const allKeysResult = get_all_keys(email, pw);
 //   const allKeysJson = JSON.parse(allKeysResult);
 
 //   console.log("WEB - get_all_keys result", allKeysJson.agent_key.keypair);
 
 //   const custKey = allKeysJson.custodial_key;
 
-//   const agentKeyResult = await get_agent_key(JSON.stringify(custKey), pw);
+//   const agentKeyResult = get_agent_key(JSON.stringify(custKey), pw);
 //   const agentKeyJson = JSON.parse(agentKeyResult);
 
 //   console.log("WEB - get_agent_key result", agentKeyJson.agent_key.keypair);
