@@ -1,6 +1,7 @@
 // // FOR TARGET WEB WITH SERVER
 import init, { get_all_keys, get_agent_key } from "./pkg/keyplace_wasm.js";
 const runWasm = async () => {
+  // Create an ECC keypair
   const pw = "dank memes";
   const email = "yes@yes.com";
 
@@ -10,6 +11,7 @@ const runWasm = async () => {
 
   console.log("WEB - get_all_keys result", allKeysJson.agent_key.keypair);
 
+  // save the custodial key to the server
   let save_data = {
     email,
     custodial_key: allKeysJson.custodial_key,
@@ -20,6 +22,7 @@ const runWasm = async () => {
     body: JSON.stringify(save_data),
   });
 
+  // recover the agent key via the custodial key from the server
   let getKeyResponse = await fetch("http://127.0.0.1:8080/get_key", {
     method: "POST",
     body: JSON.stringify({ email }),
